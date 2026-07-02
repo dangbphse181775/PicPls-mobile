@@ -152,10 +152,25 @@ export default function CreateBookingScreen({ route, navigation }: Props) {
           setIsWebViewVisible(true);
         }
       } catch (error: any) {
-        const message =
-          error?.response?.data?.title ||
-          error?.response?.data?.Error ||
-          'Có lỗi xảy ra khi tạo booking. Vui lòng thử lại.';
+        let message = 'Có lỗi xảy ra khi tạo booking. Vui lòng thử lại.';
+        const data = error?.response?.data;
+        
+        if (data) {
+          message =
+            data.detail ||
+            data.message ||
+            data.title ||
+            data.Error ||
+            (typeof data === 'string' ? data : message);
+        } else if (error?.message) {
+          message = error.message;
+        }
+
+        // Translate specific overlap error
+        if (message.includes('already has a booking')) {
+          message = 'Nhiếp ảnh gia đã có lịch chụp vào thời gian này. Vui lòng chọn một thời gian khác!';
+        }
+
         Alert.alert('Tạo booking thất bại', message, [{ text: 'Đóng' }]);
       } finally {
         setIsLoading(false);
