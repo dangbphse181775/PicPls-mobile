@@ -135,6 +135,7 @@ export default function CreateBookingScreen({ route, navigation }: Props) {
           scheduledAt: scheduledAt.toISOString(),
           location: values.location.trim(),
           note: values.note?.trim() || undefined,
+          paymentMethod: paymentMethod === 'cash' ? 'cod' : 'vnpay',
         });
 
         if (paymentMethod === 'cash') {

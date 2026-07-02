@@ -6,6 +6,7 @@ export interface CreateBookingRequest {
   scheduledAt: string;         // ISO 8601: "2026-06-15T10:00:00Z"
   location: string;            // max 300 chars
   note?: string;               // optional
+  paymentMethod?: string;
 }
 
 export interface CancelBookingRequest {
