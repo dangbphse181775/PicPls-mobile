@@ -14,8 +14,7 @@ import type { BookingSuccessScreenParams } from '../types/booking.types';
 // ─── Navigation Types ─────────────────────────────────────────────────────────
 type RootStackParamList = {
   BookingSuccess: BookingSuccessScreenParams;
-  Home: undefined;
-  MyBookings: undefined;
+  MainTabs: { screen: string };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'BookingSuccess'>;
@@ -154,7 +153,7 @@ export default function BookingSuccessScreen({ route, navigation }: Props) {
           <View style={styles.actions}>
             <TouchableOpacity
               style={styles.primaryButton}
-              onPress={() => navigation.navigate('MyBookings')}
+              onPress={() => navigation.navigate('MainTabs', { screen: 'BookingsTab' })}
               activeOpacity={0.85}
             >
               <Text style={styles.primaryButtonText}>📋  Xem lịch của tôi</Text>
@@ -162,7 +161,7 @@ export default function BookingSuccessScreen({ route, navigation }: Props) {
 
             <TouchableOpacity
               style={styles.secondaryButton}
-              onPress={() => navigation.navigate('Home')}
+              onPress={() => navigation.navigate('MainTabs', { screen: 'HomeTab' })}
               activeOpacity={0.85}
             >
               <Text style={styles.secondaryButtonText}>Về trang chủ</Text>
