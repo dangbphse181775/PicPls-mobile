@@ -9,7 +9,7 @@ import AppBackground from './src/components/AppBackground';
 import ErrorBoundary from './src/components/ErrorBoundary';
 
 import { setTokenGetter, setClearAuthCallback } from './src/api/axiosClient';
-import { useAuthStore } from './src/store/authStore';
+import { useAuthStore, clearAuth } from './src/store/authStore';
 
 // Ẩn các warning không quan trọng (SignalR reconnect, AsyncStorage, ...)
 // tránh làm rối console nhưng vẫn giữ crash-log thật.
@@ -109,7 +109,7 @@ export default function App() {
     setTokenGetter(() => useAuthStore.getState().token);
     setClearAuthCallback(() => {
       // Clear auth on 401
-      useAuthStore.getState().clearAuth();
+      clearAuth();
     });
   }, []);
 

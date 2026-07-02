@@ -43,7 +43,7 @@ async function setAuth(user: AuthResponse): Promise<void> {
   _setState({ user, token, isAuthenticated: true });
 }
 
-async function clearAuth(): Promise<void> {
+export async function clearAuth(): Promise<void> {
   try {
     await AsyncStorage.removeItem(TOKEN_KEY);
     await AsyncStorage.removeItem(USER_KEY);
