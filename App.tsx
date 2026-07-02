@@ -8,7 +8,7 @@ import { ActivityIndicator, View, StyleSheet, StatusBar, LogBox } from 'react-na
 import AppBackground from './src/components/AppBackground';
 import ErrorBoundary from './src/components/ErrorBoundary';
 
-import { setTokenGetter } from './src/api/axiosClient';
+import { setTokenGetter, setClearAuthCallback } from './src/api/axiosClient';
 import { useAuthStore } from './src/store/authStore';
 
 // Ẩn các warning không quan trọng (SignalR reconnect, AsyncStorage, ...)
@@ -107,6 +107,10 @@ export default function App() {
 
   useEffect(() => {
     setTokenGetter(() => useAuthStore.getState().token);
+    setClearAuthCallback(() => {
+      // Clear auth on 401
+      useAuthStore.getState().clearAuth();
+    });
   }, []);
 
   if (isRestoring) {

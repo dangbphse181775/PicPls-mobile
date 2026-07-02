@@ -19,9 +19,14 @@ const axiosClient = axios.create({
 // Để tránh circular dependency, lấy token qua một getter function.
 // Trong dự án thật, hãy thay thế bằng store thực tế của bạn.
 let _getToken: (() => string | null) | null = null;
+let _clearAuth: (() => void) | null = null;
 
 export const setTokenGetter = (getter: () => string | null) => {
   _getToken = getter;
+};
+
+export const setClearAuthCallback = (callback: () => void) => {
+  _clearAuth = callback;
 };
 
 axiosClient.interceptors.request.use(
@@ -43,6 +48,14 @@ axiosClient.interceptors.response.use(
     if (__DEV__) {
       console.error('[API Error]', error.response?.status, error.response?.data);
     }
+    
+    // Nếu token hết hạn hoặc không hợp lệ -> Đăng xuất
+    if (error.response?.status === 401) {
+      if (_clearAuth) {
+        _clearAuth();
+      }
+    }
+    
     return Promise.reject(error);
   },
 );
