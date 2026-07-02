@@ -16,6 +16,8 @@ import MyBookingsScreen from '../screens/MyBookingsScreen';
 import GrapherOrdersScreen from '../screens/GrapherOrdersScreen';
 import ConversationsScreen from '../screens/ConversationsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import GrapherServicePackagesScreen from '../screens/GrapherServicePackagesScreen';
+import GrapherPortfolioManagerScreen from '../screens/GrapherPortfolioManagerScreen';
 
 export type TabMode = 'guest' | 'customer' | 'grapher';
 
@@ -29,6 +31,8 @@ export type TabParamList = {
   // Logged-in mode (shared)
   HomeTab: undefined;
   BookingsTab: undefined;
+  ServicesTab: undefined;
+  PortfolioTab: undefined;
   ChatTab: undefined;
   ProfileTab: undefined;
 };
@@ -59,8 +63,10 @@ const CUSTOMER_TABS: TabConfig[] = [
 
 const GRAPHER_TABS: TabConfig[] = [
   { name: 'HomeTab', component: GrapherDashboardScreen, title: 'Tổng quan', icon: '📊' },
-  { name: 'BookingsTab', component: GrapherOrdersScreen, title: 'Đơn hàng', icon: '📋' },
-  { name: 'ChatTab', component: ConversationsScreen, title: 'Tin nhắn', icon: '💬' },
+  { name: 'BookingsTab', component: GrapherOrdersScreen, title: 'Đơn', icon: '📋' },
+  { name: 'ServicesTab', component: GrapherServicePackagesScreen, title: 'Dịch vụ', icon: '📦' },
+  { name: 'PortfolioTab', component: GrapherPortfolioManagerScreen, title: 'Ảnh', icon: '🖼️' },
+  { name: 'ChatTab', component: ConversationsScreen, title: 'Chat', icon: '💬' },
   { name: 'ProfileTab', component: ProfileScreen, title: 'Cá nhân', icon: '👤' },
 ];
 
