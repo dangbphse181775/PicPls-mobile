@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   FlatList,
   RefreshControl,
@@ -79,9 +80,11 @@ export default function ExploreScreen({ navigation }: Props) {
     [activeStyle],
   );
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   const sorted = [...graphers].sort((a, b) => {
     if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);

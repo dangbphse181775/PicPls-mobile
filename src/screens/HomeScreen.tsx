@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -114,7 +115,12 @@ export default function HomeScreen({ navigation }: Props) {
     }
   }, [filter]);
 
-  useEffect(() => { loadGraphers(); loadUnreadCount(); }, [loadGraphers, loadUnreadCount]);
+  useFocusEffect(
+    useCallback(() => {
+      loadGraphers();
+      loadUnreadCount();
+    }, [loadGraphers, loadUnreadCount])
+  );
 
   useEffect(() => {
     if (!searchText.trim()) {
