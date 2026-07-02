@@ -85,7 +85,12 @@ export default function ChatScreen({ route, navigation }: Props) {
           message.senderId === otherUserId ||
           message.receiverId === otherUserId
         ) {
-          setMessages((prev) => [...prev, message]);
+          setMessages((prev) => {
+            // Deduplicate by content and time (if ID is not reliable yet)
+            // Or just check if we already have it
+            if (prev.some(m => m.id === message.id)) return prev;
+            return [...prev, message];
+          });
         }
       });
 
@@ -143,19 +148,37 @@ export default function ChatScreen({ route, navigation }: Props) {
     }
 
     const content = inputText.trim();
-    setInputText(''); // Xóa input ngay lập tức để UX tốt
+    setInputText('');
+
+    // Optimistic UI
+    const tempId = Date.now().toString();
+    const optimisticMessage: MessageResponse = {
+      id: tempId,
+      senderId: currentUserId || '',
+      receiverId: otherUserId,
+      content: content,
+      createdAt: new Date().toISOString(),
+      isRead: false,
+    };
+    
+    setMessages(prev => [...prev, optimisticMessage]);
 
     try {
       const conn = connectionRef.current;
       if (conn && conn.state === signalR.HubConnectionState.Connected) {
-        await conn.invoke('SendMessage', {
-          receiverId: otherUserId,
-          content: content,
-        });
-        // Không push vào messages local, đợi sự kiện 'ReceiveMessage' từ server trả về.
-        // Backend Hub SendMessage sẽ bắn lại ReceiveMessage cho cả sender và receiver.
+        try {
+          // Thử gọi với object payload
+          await conn.invoke('SendMessage', {
+            receiverId: otherUserId,
+            content: content,
+          });
+        } catch (err) {
+          // Nếu backend expect (string, string) thì fallback
+          await conn.invoke('SendMessage', otherUserId, content);
+        }
       } else {
-        // Đang reconnect: hoàn lại input và thông báo
+        // Đang reconnect: hoàn lại input và thông báo, xóa tin nhắn optimistic
+        setMessages(prev => prev.filter(m => m.id !== tempId));
         setInputText(content);
         Alert.alert(
           'Đang kết nối lại',
@@ -164,7 +187,8 @@ export default function ChatScreen({ route, navigation }: Props) {
         );
       }
     } catch (error: any) {
-      // Hoàn lại input nếu gửi lỗi
+      // Hoàn lại input nếu gửi lỗi và xóa tin nhắn optimistic
+      setMessages(prev => prev.filter(m => m.id !== tempId));
       setInputText(content);
       console.warn('[Chat] Send message failed:', error?.message || error);
     }

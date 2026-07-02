@@ -108,6 +108,7 @@ export default function CreateBookingScreen({ route, navigation }: Props) {
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
   const [isWebViewLoading, setIsWebViewLoading] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<'vnpay' | 'cash'>('vnpay');
   const webViewRef = useRef<WebView>(null);
 
   // ── Form ─────────────────────────────────────────────────────────────────────
@@ -136,8 +137,19 @@ export default function CreateBookingScreen({ route, navigation }: Props) {
           note: values.note?.trim() || undefined,
         });
 
-        setPaymentUrl(response.paymentUrl);
-        setIsWebViewVisible(true);
+        if (paymentMethod === 'cash') {
+          // Bỏ qua thanh toán, đi thẳng tới màn hình thành công
+          navigation.replace('BookingSuccess', {
+            bookingId: response.booking?.id || '',
+            grapherName,
+            serviceName: servicePackage.name,
+            totalAmount: servicePackage.price,
+            scheduledAt: scheduledAt.toISOString(),
+          });
+        } else {
+          setPaymentUrl(response.paymentUrl);
+          setIsWebViewVisible(true);
+        }
       } catch (error: any) {
         const message =
           error?.response?.data?.title ||
@@ -388,7 +400,48 @@ export default function CreateBookingScreen({ route, navigation }: Props) {
               </View>
             </View>
 
-            {/* ── Submit Button ─────────────────────────────────────── */}
+            {/* ── Payment Method ─────────────────────────────────────── */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Phương thức thanh toán</Text>
+              <View style={styles.paymentMethods}>
+                <TouchableOpacity
+                  style={[
+                    styles.paymentMethodCard,
+                    paymentMethod === 'vnpay' && styles.paymentMethodCardActive,
+                  ]}
+                  onPress={() => setPaymentMethod('vnpay')}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.paymentMethodIcon}>💳</Text>
+                  <View style={styles.paymentMethodTexts}>
+                    <Text style={styles.paymentMethodTitle}>VNPAY</Text>
+                    <Text style={styles.paymentMethodDesc}>Thanh toán online</Text>
+                  </View>
+                  <View style={[styles.radio, paymentMethod === 'vnpay' && styles.radioActive]}>
+                    {paymentMethod === 'vnpay' && <View style={styles.radioInner} />}
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.paymentMethodCard,
+                    paymentMethod === 'cash' && styles.paymentMethodCardActive,
+                  ]}
+                  onPress={() => setPaymentMethod('cash')}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.paymentMethodIcon}>💵</Text>
+                  <View style={styles.paymentMethodTexts}>
+                    <Text style={styles.paymentMethodTitle}>Tiền mặt</Text>
+                    <Text style={styles.paymentMethodDesc}>Thanh toán sau buổi chụp</Text>
+                  </View>
+                  <View style={[styles.radio, paymentMethod === 'cash' && styles.radioActive]}>
+                    {paymentMethod === 'cash' && <View style={styles.radioInner} />}
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+
             <TouchableOpacity
               style={[styles.submitButton, isLoading && styles.submitButtonDisabled]}
               onPress={handleSubmit(onSubmit)}
@@ -399,16 +452,18 @@ export default function CreateBookingScreen({ route, navigation }: Props) {
                 <ActivityIndicator color="#FFFFFF" size="small" />
               ) : (
                 <>
-                  <Text style={styles.submitButtonIcon}>💳</Text>
+                  <Text style={styles.submitButtonIcon}>
+                    {paymentMethod === 'vnpay' ? '💳' : '✅'}
+                  </Text>
                   <Text style={styles.submitButtonText}>
-                    Xác nhận & Thanh toán
+                    {paymentMethod === 'vnpay' ? 'Xác nhận & Thanh toán' : 'Xác nhận Đặt lịch'}
                   </Text>
                 </>
               )}
             </TouchableOpacity>
 
             <Text style={styles.secureNote}>
-              🔒 Thanh toán được bảo mật bởi VNPAY
+              {paymentMethod === 'vnpay' ? '🔒 Thanh toán được bảo mật bởi VNPAY' : '📝 Thanh toán trực tiếp khi gặp mặt'}
             </Text>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -798,14 +853,65 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     color: '#FFFFFF',
-    letterSpacing: 0.3,
   },
   secureNote: {
     textAlign: 'center',
-    fontSize: 12,
     color: COLORS.textMuted,
-    marginTop: 12,
-    fontWeight: '500',
+    fontSize: 12,
+    marginTop: 14,
+  },
+
+  // ── Payment Methods ─────────────────────────────────────────────────────────
+  paymentMethods: {
+    gap: 12,
+  },
+  paymentMethodCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    borderRadius: 14,
+    padding: 16,
+  },
+  paymentMethodCardActive: {
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primary + '10',
+  },
+  paymentMethodIcon: {
+    fontSize: 24,
+    marginRight: 14,
+  },
+  paymentMethodTexts: {
+    flex: 1,
+  },
+  paymentMethodTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+    marginBottom: 4,
+  },
+  paymentMethodDesc: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+  },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: COLORS.textMuted,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  radioActive: {
+    borderColor: COLORS.primary,
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: COLORS.primary,
   },
 
   // ── WebView ───────────────────────────────────────────────────────────────

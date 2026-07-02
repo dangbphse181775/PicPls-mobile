@@ -288,15 +288,15 @@ export default function BookingDetailScreen({ route, navigation }: Props) {
               <ActivityIndicator size="large" color="#6366F1" style={{ marginVertical: 20 }} />
             ) : (
               <>
-                {/* Cancel is allowed for both if pending confirmation */}
-                {(booking.status === 'PendingConfirmation' || booking.status === 'Confirmed') && (
+                {/* Cancel is allowed for both if pending confirmation or pending payment */}
+                {(booking.status === 'PendingConfirmation' || booking.status === 'Confirmed' || booking.status === 'PendingPayment') && (
                   <TouchableOpacity style={styles.btnDanger} onPress={handleCancel}>
                     <Text style={styles.btnDangerText}>Hủy lịch</Text>
                   </TouchableOpacity>
                 )}
 
                 {/* Grapher actions */}
-                {isGrapher && booking.status === 'PendingConfirmation' && (
+                {isGrapher && (booking.status === 'PendingConfirmation' || booking.status === 'PendingPayment') && (
                   <TouchableOpacity style={styles.btnPrimary} onPress={handleConfirm}>
                     <Text style={styles.btnPrimaryText}>Xác nhận lịch</Text>
                   </TouchableOpacity>
