@@ -1,5 +1,4 @@
 {
-  "$schema": "https://docs.expo.dev/static/app.config.schema.json",
   "expo": {
     "name": "PIC PLS",
     "slug": "pic-pls",
