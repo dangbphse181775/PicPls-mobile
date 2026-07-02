@@ -161,7 +161,7 @@ export default function CreateBookingScreen({ route, navigation }: Props) {
         setIsLoading(false);
       }
     },
-    [grapherProfileId, servicePackage.id, scheduledAt],
+    [grapherProfileId, servicePackage.id, scheduledAt, paymentMethod, navigation, grapherName],
   );
 
   // ── WebView Navigation Handler ────────────────────────────────────────────────
