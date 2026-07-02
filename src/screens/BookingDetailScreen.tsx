@@ -53,9 +53,9 @@ export default function BookingDetailScreen({ route, navigation }: Props) {
   // @ts-ignore - BookingDetail params will be added to App.tsx later
   const { bookingId } = route.params;
   const { user } = useAuthStore();
-  const userRole = user?.role;
-  const isCustomer = userRole === 'Customer';
-  const isGrapher = userRole === 'Grapher';
+  const userRole = user?.role?.toLowerCase();
+  const isCustomer = userRole === 'customer';
+  const isGrapher = userRole === 'grapher';
 
   const [booking, setBooking] = useState<BookingDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -91,7 +91,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 // Wrapper that injects the role into TabNavigator
 function TabsWithMode() {
   const { user } = useAuthStore();
-  const mode: TabMode = !user ? 'guest' : user.role === 'Grapher' ? 'grapher' : 'customer';
+  const mode: TabMode = !user ? 'guest' : user.role?.toLowerCase() === 'grapher' ? 'grapher' : 'customer';
   // Re-mount the navigator when mode changes
   return <TabNavigator key={mode} mode={mode} />;
 }
@@ -195,7 +195,7 @@ export default function App() {
             />
 
             {/* Grapher-only */}
-            {user?.role === 'Grapher' && (
+            {user?.role?.toLowerCase() === 'grapher' && (
               <>
                 <Stack.Screen
                   name="GrapherShop"

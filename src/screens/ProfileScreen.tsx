@@ -27,7 +27,7 @@ interface MenuItem {
 
 export default function ProfileScreen({ navigation }: Props) {
   const { user, clearAuth } = useAuthStore();
-  const isGrapher = user?.role === 'Grapher';
+  const isGrapher = user?.role?.toLowerCase() === 'grapher';
 
   const handleLogout = () => {
     Alert.alert('Đăng xuất', 'Bạn có chắc muốn đăng xuất?', [

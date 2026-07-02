@@ -36,8 +36,8 @@ const renderStars = (rating: number) => {
 export default function GrapherDetailScreen({ route, navigation }: Props) {
   const { grapherId } = route.params;
   const { user, isAuthenticated } = useAuthStore();
-  const userRole = user?.role;
-  const isCustomer = userRole === 'Customer';
+  const userRole = user?.role?.toLowerCase();
+  const isCustomer = userRole === 'customer';
 
   const [grapher, setGrapher] = useState<GrapherDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
