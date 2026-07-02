@@ -150,18 +150,7 @@ export default function ChatScreen({ route, navigation }: Props) {
     const content = inputText.trim();
     setInputText('');
 
-    // Optimistic UI
-    const tempId = Date.now().toString();
-    const optimisticMessage: MessageResponse = {
-      id: tempId,
-      senderId: currentUserId || '',
-      receiverId: otherUserId,
-      content: content,
-      createdAt: new Date().toISOString(),
-      isRead: false,
-    };
-    
-    setMessages(prev => [...prev, optimisticMessage]);
+
 
     try {
       const conn = connectionRef.current;
@@ -177,8 +166,7 @@ export default function ChatScreen({ route, navigation }: Props) {
           await conn.invoke('SendMessage', otherUserId, content);
         }
       } else {
-        // Đang reconnect: hoàn lại input và thông báo, xóa tin nhắn optimistic
-        setMessages(prev => prev.filter(m => m.id !== tempId));
+        // Đang reconnect: hoàn lại input và thông báo
         setInputText(content);
         Alert.alert(
           'Đang kết nối lại',
@@ -187,8 +175,7 @@ export default function ChatScreen({ route, navigation }: Props) {
         );
       }
     } catch (error: any) {
-      // Hoàn lại input nếu gửi lỗi và xóa tin nhắn optimistic
-      setMessages(prev => prev.filter(m => m.id !== tempId));
+      // Hoàn lại input nếu gửi lỗi
       setInputText(content);
       console.warn('[Chat] Send message failed:', error?.message || error);
     }
