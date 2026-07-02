@@ -11,6 +11,7 @@ import PresetShopScreen from '../screens/PresetShopScreen';
 import QuickCaptureScreen from '../screens/QuickCaptureScreen';
 import GuestProfileScreen from '../screens/GuestProfileScreen';
 import HomeScreen from '../screens/HomeScreen';
+import GrapherDashboardScreen from '../screens/GrapherDashboardScreen';
 import MyBookingsScreen from '../screens/MyBookingsScreen';
 import GrapherOrdersScreen from '../screens/GrapherOrdersScreen';
 import ConversationsScreen from '../screens/ConversationsScreen';
@@ -57,7 +58,7 @@ const CUSTOMER_TABS: TabConfig[] = [
 ];
 
 const GRAPHER_TABS: TabConfig[] = [
-  { name: 'HomeTab', component: HomeScreen, title: 'Khám phá', icon: '🏠' },
+  { name: 'HomeTab', component: GrapherDashboardScreen, title: 'Tổng quan', icon: '📊' },
   { name: 'BookingsTab', component: GrapherOrdersScreen, title: 'Đơn hàng', icon: '📋' },
   { name: 'ChatTab', component: ConversationsScreen, title: 'Tin nhắn', icon: '💬' },
   { name: 'ProfileTab', component: ProfileScreen, title: 'Cá nhân', icon: '👤' },
